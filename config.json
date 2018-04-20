@@ -1,0 +1,11 @@
+{
+    "render":
+    {
+        "port": 80, "protocol": "http"
+    },
+    "log_level": "ERROR", "neuroglancer":
+        {
+            "base_url": "http://ibs-forrestc-ux1.corp.alleninstitute.org:8002",
+            "blend": "additive"
+        }
+}
