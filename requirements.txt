@@ -1,2 +1,3 @@
 Flask>=0.12
+requests>==2.18.4
 git+https://github.com/AllenInstitute/argschema@argsobj_generalization
