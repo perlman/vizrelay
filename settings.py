@@ -17,8 +17,11 @@ class RenderSchema(DefaultSchema):
     port = Int(default=80, required=False)
 
 class VizRelaySchema(ArgSchema):
-    neuroglancer = Nested(NeuroglancerSchema, required=True)
-    render = Nested(RenderSchema, required=True)
+    neuroglancer = Nested(NeuroglancerSchema, required=False)
+    render = Nested(RenderSchema, required=False)
+
+def add_defaults(args):
+    smart_merge(DEFAULT_SETTINGS, args)
 
 def get_settings(query_args):
     d = {}

@@ -5,6 +5,7 @@ WORKDIR /app
 EXPOSE 5000
 RUN pip install -r requirements.txt
 
-ENV RELAY_CONFIG config.json
+ENV RELAY_CONFIG_JSON {}
+ENV RELAY_CONFIG_FILE config.json
 
 ENTRYPOINT ["python", "main.py"]

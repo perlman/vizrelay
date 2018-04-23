@@ -4,20 +4,25 @@ import json
 import pprint
 import os
 import settings
+import sys
 
 from flask import Flask, request, redirect
 
 app = Flask(__name__)
-app.config['RELAY_CONFIG'] = os.environ.get(
-    "RELAY_CONFIG",
+app.config['RELAY_CONFIG_FILE'] = os.environ.get(
+    "RELAY_CONFIG_FILE",
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.json")
 )
-
+app.config['RELAY_CONFIG_JSON'] = os.environ.get(
+    "RELAY_CONFIG_JSON",
+    "{}")
 
 @app.before_first_request
 def setup():
-    if app.config['RELAY_CONFIG']:
-        settings.DEFAULT_SETTINGS = json.load(open(app.config['RELAY_CONFIG']))
+    if 'RELAY_CONFIG_FILE' in app.config:
+        settings.add_defaults(json.load(open(app.config['RELAY_CONFIG_FILE'])))
+    if 'RELAY_CONFIG_JSON' in app.config:
+        settings.add_defaults(json.loads(app.config['RELAY_CONFIG_JSON']))
 
 
 @app.route("/")
@@ -41,8 +46,8 @@ def render(server, owner, project, stack, channel):
     if channel:
         render_params.append(channel)
         
-    render_source = "render://{0}://{1}:{2}/{3}".format(
-        config['render']['protocol'], server, config['render']['port'],
+    render_source = "render://{0}/{1}/{2}".format(
+        config['render']['protocol'], server,
         '/'.join(render_params))
 
     params = {}
