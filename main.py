@@ -5,7 +5,7 @@ import pprint
 import os
 import settings
 
-from flask import Flask, request
+from flask import Flask, request, redirect
 
 app = Flask(__name__)
 app.config['RELAY_CONFIG'] = os.environ.get(
@@ -51,9 +51,9 @@ def render(server, owner, project, stack, channel):
     params['blend'] = config['neuroglancer']['blend']
 
     new_url = "{0}/#!{1}".format(config['neuroglancer']['base_url'],
-        json.dumps(params, separators=(',', ':')).replace('"',"'"))
+        json.dumps(params, separators=(',', ':')).replace('"', "'"))
 
-    return '<a href="{0}">{0}</a>'.format(new_url)
+    return redirect(new_url, code=303)
 
 
 if __name__ == "__main__":
