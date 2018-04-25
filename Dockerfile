@@ -8,4 +8,5 @@ RUN pip install -r requirements.txt
 ENV RELAY_CONFIG_JSON {}
 ENV RELAY_CONFIG_FILE config.json
 
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["/app/entry-point.sh"]
+CMD ["python", "main.py"]
