@@ -9,4 +9,4 @@ ENV RELAY_CONFIG_JSON {}
 ENV RELAY_CONFIG_FILE config.json
 
 ENTRYPOINT ["/app/entry-point.sh"]
-CMD ["python", "main.py"]
+CMD ["python3", "main.py"]
