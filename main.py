@@ -46,7 +46,7 @@ def render(server, owner, project, stack, channel):
     if channel:
         render_params.append(channel)
         
-    render_source = "render://{0}/{1}/{2}".format(
+    render_source = "render://{0}://{1}/{2}".format(
         config['render']['protocol'], server,
         '/'.join(render_params))
 
