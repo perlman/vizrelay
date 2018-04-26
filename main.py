@@ -4,8 +4,7 @@ import json
 import pprint
 import os
 import settings
-import sys
-
+import argschema
 from flask import Flask, request, redirect
 
 app = Flask(__name__)
@@ -16,6 +15,7 @@ app.config['RELAY_CONFIG_FILE'] = os.environ.get(
 app.config['RELAY_CONFIG_JSON'] = os.environ.get(
     "RELAY_CONFIG_JSON",
     "{}")
+
 
 @app.before_first_request
 def setup():
@@ -37,7 +37,8 @@ def main():
 
 
 # Sample URL http://ibs-forrestc-ux1:8002/render/ibs-forrestc-ux1.corp.alleninstitute.org/Forrest/H16_03_005_HSV_HEF1AG65_R2An15dTom/ACQGephyrin/
-@app.route("/render/<server>/<owner>/<project>/<stack>/", defaults={'channel': None})
+@app.route("/render/<server>/<owner>/<project>/<stack>/",
+           defaults={'channel': None})
 @app.route("/render/<server>/<owner>/<project>/<stack>/<channel>/")
 def render(server, owner, project, stack, channel):
     config = settings.get_settings(request.args).args
@@ -45,18 +46,23 @@ def render(server, owner, project, stack, channel):
     render_params = [owner, project, stack]
     if channel:
         render_params.append(channel)
-        
+
     render_source = "render://{0}://{1}/{2}".format(
         config['render']['protocol'], server,
         '/'.join(render_params))
 
     params = {}
     layer = {'type': 'image', 'source': render_source}
+    layer = argschema.utils.smart_merge(layer,
+                                        config['neuroglancer']
+                                              ['layer_options'])
     params['layers'] = {stack: layer}
-    params['blend'] = config['neuroglancer']['blend']
-
+    params = argschema.utils.smart_merge(params,
+                                         config['neuroglancer']['options'])
+    params_json = json.dumps(params, separators=(',', ':'))
     new_url = "{0}/#!{1}".format(config['neuroglancer']['base_url'],
-        json.dumps(params, separators=(',', ':')).replace('"', "'"))
+                                 params_json)
+    new_url = new_url.replace('"', "'")
 
     return redirect(new_url, code=303)
 
