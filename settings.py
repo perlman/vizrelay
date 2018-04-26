@@ -34,8 +34,8 @@ class NeuroglancerLayerOptions(DefaultSchema):
 class NeuroglancerSchema(DefaultSchema):
     base_url = Str(default="https://neuroglancer-demo.appspot.com/",
                    description="Neuroglancer URL", required=False)
-    options = Nested(NeuroglancerDefaultOptions)
-    layer_options = Nested(NeuroglancerLayerOptions)
+    options = Nested(NeuroglancerDefaultOptions, default={})
+    layer_options = Nested(NeuroglancerLayerOptions, default={})
 
 
 class RenderSchema(DefaultSchema):
@@ -47,8 +47,8 @@ class RenderSchema(DefaultSchema):
 
 
 class VizRelaySchema(ArgSchema):
-    neuroglancer = Nested(NeuroglancerSchema, required=False)
-    render = Nested(RenderSchema, required=False)
+    neuroglancer = Nested(NeuroglancerSchema, required=False, default={})
+    render = Nested(RenderSchema, required=False, default={})
 
 
 def add_defaults(args):
