@@ -44,6 +44,10 @@ class RenderSchema(DefaultSchema):
         help="Protocol to connect to render with (http or https)",
         required=False)
     port = Int(default=80, required=False)
+    encoding = Str(
+        default="jpg",
+        help="Encoding option for the neuroglancer render datasource (jpg or raw16)",
+        required=False)
 
 
 class VizRelaySchema(ArgSchema):
