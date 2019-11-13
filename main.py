@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import pprint
 import os
@@ -68,4 +69,9 @@ def render(server, owner, project, stack, channel):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--port", action="store", type=int, default=5000)
+    parser.add_argument("--host", action="store", type=str, default="0.0.0.0")
+    args = parser.parse_args()
+
+    app.run(host=args.host, port=args.port)
