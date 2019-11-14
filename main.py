@@ -6,6 +6,7 @@ import pprint
 import os
 import settings
 import argschema
+import requests
 from flask import Flask, request, redirect
 
 app = Flask(__name__)
@@ -44,26 +45,60 @@ def main():
 def render(server, owner, project, stack, channel):
     config = settings.get_settings(request.args).args
 
-    render_params = [owner, project, stack]
-    if channel:
-        render_params.append(channel)
+    if config['render']['all_channels']:
+        # Check for all available channels
+        # http://localhost:8080/render-ws/v1/owner/E/project/C/stack/S2_RoughAligned
+        if config['render']['alt_render']:
+            apiserver = config['render']['alt_render']
+        else:
+            apiserver = server
+        stack_info_url = "{0}://{1}/render-ws/v1/owner/{2}/project/{3}/stack/{4}".format(
+            config['render']['protocol'], apiserver, owner, project, stack)
+        stack_info = requests.get(stack_info_url).json()
 
-    render_source = "render://{0}://{1}/{2}?encoding={3}".format(
-        config['render']['protocol'], server,
-        '/'.join(render_params), config['render']['encoding'])
+        params = {'layers' : {}}
+        for channel in stack_info["stats"]["channelNames"]:
+            render_params = [owner, project, stack]
+            if channel:
+                render_params.append(channel)
+            
+            render_source = "render://{0}://{1}/{2}?encoding={3}".format(
+            config['render']['protocol'], server,
+            '/'.join(render_params), config['render']['encoding'])
 
-    params = {}
-    layer = {'type': 'image', 'source': render_source}
-    layer = argschema.utils.smart_merge(layer,
-                                        config['neuroglancer']
-                                              ['layer_options'])
-    params['layers'] = {stack: layer}
-    params = argschema.utils.smart_merge(params,
-                                         config['neuroglancer']['options'])
-    params_json = json.dumps(params, separators=(',', ':'))
-    new_url = "{0}/#!{1}".format(config['neuroglancer']['base_url'],
-                                 params_json)
-    new_url = new_url.replace('"', "'")
+
+            layer = {'type': 'image', 'source': render_source}
+            layer = argschema.utils.smart_merge(layer,
+                    config['neuroglancer']['layer_options'])
+            params['layers'][channel] = layer
+        params = argschema.utils.smart_merge(params, config['neuroglancer']['options'])
+        params_json = json.dumps(params, separators=(',', ':'))
+        new_url = "{0}/#!{1}".format(config['neuroglancer']['base_url'],
+                                params_json)
+        new_url = new_url.replace('"', "'")
+        return new_url
+
+    else:
+        render_params = [ owner, project, stack]
+        if channel:
+            render_params.append(channel)
+        
+        render_source = "render://{0}://{1}/{2}?encoding={3}".format(
+            config['render']['protocol'], server,
+            '/'.join(render_params), config['render']['encoding'])
+
+        params = {}
+        layer = {'type': 'image', 'source': render_source}
+        layer = argschema.utils.smart_merge(layer,
+                                            config['neuroglancer']
+                                                ['layer_options'])
+        params['layers'] = {stack: layer}
+        params = argschema.utils.smart_merge(params,
+                                            config['neuroglancer']['options'])
+        params_json = json.dumps(params, separators=(',', ':'))
+        new_url = "{0}/#!{1}".format(config['neuroglancer']['base_url'],
+                                    params_json)
+        new_url = new_url.replace('"', "'")
 
     return redirect(new_url, code=303)
 

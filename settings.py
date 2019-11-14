@@ -2,7 +2,7 @@
 Settings (default) management for viz redirection service.
 '''
 from argschema import ArgSchema, ArgSchemaParser
-from argschema.fields import Nested, Str, Int, Float
+from argschema.fields import Boolean, Nested, Str, Int, Float
 from argschema.schemas import DefaultSchema
 from argschema.utils import args_to_dict, smart_merge
 import marshmallow as mm
@@ -47,6 +47,12 @@ class RenderSchema(DefaultSchema):
     encoding = Str(
         default="jpg",
         help="Encoding option for the neuroglancer render datasource (jpg or raw16)",
+        required=False)
+    all_channels = Boolean(default=False, required=False,
+        help="Use Render API to query for and load all channels")
+    alt_render = Str(
+        default="",
+        help="Alternate render host to use for vizrelat API calls [to work in Docker]",
         required=False)
 
 
