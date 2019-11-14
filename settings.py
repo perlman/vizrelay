@@ -28,6 +28,10 @@ class NeuroglancerDefaultOptions(DefaultSchema):
 class NeuroglancerLayerOptions(DefaultSchema):
     opacity = Float(validate=mm.validate.Range(0, 1),
                     description="default opacity of layers")
+    blend = Str(default="default",
+                validate=mm.validate.OneOf(['default', 'additive']),
+                description="Blend mode for this each layer created",
+                required=False)
     shader = Str(description="shader to use")
 
 
