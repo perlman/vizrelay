@@ -4,7 +4,8 @@
         "protocol": "http",
         "encoding": "raw16",
         "all_channels": true,
-        "alt_render": "localhost:8080"  
+        "alt_render": "localhost:8080",
+        "enable_one_channel" : true
     },
     "log_level": "ERROR",
     "neuroglancer":

@@ -52,11 +52,15 @@ class RenderSchema(DefaultSchema):
         default="jpg",
         help="Encoding option for the neuroglancer render datasource (jpg or raw16)",
         required=False)
-    all_channels = Boolean(default=False, required=False,
-        help="Use Render API to query for and load all channels")
+    all_channels = Boolean(default=False,
+        help="Use Render API to query for and load all channels",
+        required=False)
     alt_render = Str(
         default="",
-        help="Alternate render host to use for vizrelat API calls [to work in Docker]",
+        help="Alternate render host to use for vizrelay API calls [to work in Docker]",
+        required=False)
+    enable_one_channel = Boolean(default=False,
+        help="Enable only one of the channels",
         required=False)
 
 
