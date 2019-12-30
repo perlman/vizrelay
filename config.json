@@ -5,7 +5,13 @@
         "encoding": "raw16",
         "all_channels": true,
         "alt_render": "localhost:8080",
-        "enable_one_channel" : true
+        "enable_one_channel" : true,
+        "channel_name_shader_sub" : {
+            "__default__" : { "COLOR" : "white" },
+            "DAPI_1" : { "COLOR" : "cyan" },
+            "DAPI_2" : { "COLOR" : "cyan" },
+            "PSD95"  : { "COLOR" : "red" }
+        }
     },
     "log_level": "ERROR",
     "neuroglancer":
@@ -14,7 +20,7 @@
         "layer_options":{
             "blend": "additive",
             "opacity":1.0,
-            "shader": "void emitThresholdColorRGB(vec3 rgb) {  \n                        float uMin = 0.0;\n                        float uMax = 0.5;\n                        vec3 uColor = vec3(1.0, 1.0, 1.0);\n                        rgb = rgb * uColor; \n                        emit(\n                            vec4(\n                                min( max( (rgb.r - uMin) / uMax, 0.0) , 1.0 ),\n                                min( max( (rgb.g - uMin) / uMax, 0.0) , 1.0 ),\n                                min( max( (rgb.b - uMin) / uMax, 0.0) , 1.0 ),\n                                uOpacity\n                            )\n                        );\n                    }\n\n                    void main() {\n                    emitThresholdColorRGB(\n                        vec3(\n                        toNormalized(getDataValue(0)),\n                        toNormalized(getDataValue(1)),\n                        toNormalized(getDataValue(2))\n                        )\n                    );\n                    }"
+            "shader": "#uicontrol vec3 color color(default=\"COLOR\")\n#uicontrol float min slider(min=0, max=1.0, default=0.0)\n#uicontrol float max slider(min=0, max=1.0, default=1.0)\n\nfloat scale(float x) {\n  return (x - min) / (max - min);\n}\nvoid main() {\n  emitRGB(\n    color * vec3(\n      scale(toNormalized(getDataValue())),\n      scale(toNormalized(getDataValue())),\n      scale(toNormalized(getDataValue()))\n    )\n  );\n}"
         },
         "options":
         {

@@ -74,13 +74,22 @@ def render(server, owner, project, stack, channel):
 
                 layer = argschema.utils.smart_merge(layer,
                         config['neuroglancer']['layer_options'])
+
+                if 'shader' in layer:
+                    if channel in config['render']['channel_name_shader_sub']:
+                        for k, v in config['render']['channel_name_shader_sub'][channel].items():
+                            layer['shader'] = layer['shader'].replace(k,v)
+
+                    if '__default__' in config['render']['channel_name_shader_sub']:
+                        for k, v in config['render']['channel_name_shader_sub']['__default__'].items():
+                            layer['shader'] = layer['shader'].replace(k,v)
+
                 params['layers'][channel] = layer
                 
             params = argschema.utils.smart_merge(params, config['neuroglancer']['options'])
             params_json = json.dumps(params, separators=(',', ':'), sort_keys=True)
             new_url = "{0}/#!{1}".format(config['neuroglancer']['base_url'],
                                     params_json)
-            new_url = new_url.replace('"', "'")
             return redirect(new_url, code=303)
         else:
             pass # Default to use the regular code path (below) when there are no channels

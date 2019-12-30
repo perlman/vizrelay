@@ -2,7 +2,7 @@
 Settings (default) management for viz redirection service.
 '''
 from argschema import ArgSchema, ArgSchemaParser
-from argschema.fields import Boolean, Nested, Str, Int, Float
+from argschema.fields import Boolean, Nested, Str, Int, Float, Dict
 from argschema.schemas import DefaultSchema
 from argschema.utils import args_to_dict, smart_merge
 import marshmallow as mm
@@ -62,6 +62,10 @@ class RenderSchema(DefaultSchema):
     enable_one_channel = Boolean(default=False,
         help="Enable only one of the channels",
         required=False)
+    channel_name_shader_sub = Dict(default={},
+        help="Dictionary of CHANNEL_NAME : { SUB_NAME : SUB_VALUE }",
+        required=False)
+
 
 
 class VizRelaySchema(ArgSchema):
